@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMS - Academic Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 90%;
+            max-width: 1200px;
+            height: 95vh;
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 10;
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .hero-slide {
+            text-align: center;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-slide h1 {
+            font-size: 4.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .hero-slide p {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .role-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover {
+            transform: scale(1.05);
+        }
+
+        .role-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .role-subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .tech-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .tech-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+
+        .dept-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .dept-name {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .dept-info {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .benefits-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .benefit-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+        }
+
+        .benefit-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .benefit-list {
+            list-style: none;
+            line-height: 2;
+        }
+
+        .benefit-list li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .team-section {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .team-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .team-name {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .team-role {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .team-skills {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .skill-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 1.3em;
+            margin: 30px 0;
+            border: 3px dashed #667eea;
+        }
+
+        /* Navigation Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                height: 90vh;
+            }
+            .hero-slide h1 { font-size: 2.5em; }
+            .nav-btn { padding: 12px 20px; font-size: 1em; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 11</div>
+    
+    <div class="presentation-container">
+        <!-- Slide 1: Hero -->
+        <div class="slide active hero-slide">
+            <h1> RASHTRASANT TUKADOJI MAHARAJ NAGPUR UNIVERSITY</h1>
+            <h1>AAVISHKAR 2025-26</h1>
+            <h1>🎓 AMS</h1>
+            <p>Academic Management System</p>
+            <h2 style="color: white; font-size: 1.8em;">Revolutionizing Educational Institution Management Through Technology</h2>
+            <img src="./AMS.jpeg" alt="System Dashboard" style="width: 90%; max-height: 650px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+<h1>PROJECT DETAILS
+CATEGORY
+LEVEL
+Humanities/ Engg
+U G
+DEVELOPED BY
+HIMANSHU PAT I L & PRANAY PA N O R E</h1>
+        </div>
+
+        <!-- Slide 2: Overview -->
+        <div class="slide">
+            <h2>Project Overview</h2>
+            <p style="font-size: 1.3em; color: #666; line-height: 1.8; text-align: center; margin-bottom: 30px;">
+                AMS is a comprehensive, enterprise-grade web-based academic management system designed to streamline and optimize educational operations. It provides an integrated, intelligent platform for managing students, faculty, academics, attendance, assessment, and institutional communications.
+            </p>
+            <p style="font-size: 1.2em; color: #667eea; text-align: center; font-weight: bold;">
+                Serving the academic excellence of NIT College with real-time data analytics and institutional insights.
+            </p>
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800" alt="Overview Architecture" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+
+        </div>
+
+        <!-- Slide 3: Statistics -->
+        <div class="slide">
+            <h2>By The Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">382</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">26</div>
+                    <div class="stat-label">Teachers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">37</div>
+                    <div class="stat-label">Classes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Departments</div>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800" alt="Analytics Dashboard" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+
+        </div>
+
+        <!-- Slide 4: Key Features -->
+        <div class="slide">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Attendance Management</div>
+                    <div class="feature-desc">Real-time attendance tracking with automated reports and trend analysis</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <div class="feature-title">Marks Management</div>
+                    <div class="feature-desc">Comprehensive mark recording and transcript generation system</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <div class="feature-title">Class Scheduling</div>
+                    <div class="feature-desc">Intelligent timetable management across departments and courses</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <div class="feature-title">Communication Hub</div>
+                    <div class="feature-desc">Integrated messaging platform for all stakeholders</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📁</div>
+                    <div class="feature-title">Document Management</div>
+                    <div class="feature-desc">Secure storage for academic records and official documents</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📢</div>
+                    <div class="feature-title">Announcements</div>
+                    <div class="feature-desc">Priority-based notices with instant delivery system</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: System Users -->
+        <div class="slide">
+            <h2>System Users & Roles</h2>
+            <p style="text-align: center; color: #666; font-size: 1.2em; margin-bottom: 30px;">
+                AMS implements a sophisticated role-based access control system with specialized dashboards and functionalities
+            </p>
+            <div class="roles-grid">
+                <div class="role-card">
+                    <div class="role-title">👨‍💼 Administrator</div>
+                    <div class="role-subtitle">System Configuration</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">👔 HOD</div>
+                    <div class="role-subtitle">Department Head</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">👨‍🏫 Teacher</div>
+                    <div class="role-subtitle">Class Management</div>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">👨‍🎓 Student</div>
+                    <div class="role-subtitle">Academic Tracking</div>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800" alt="Role-Based Dashboard" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        </div>
+
+        <!-- Slide 6: Technology Stack -->
+        <div class="slide">
+            <h2>Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <div class="tech-icon">🎨</div>
+                    <h3>Frontend</h3>
+                    <p>HTML5 & CSS3<br>Responsive Design<br>Interactive UI</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">⚙️</div>
+                    <h3>Backend</h3>
+                    <p>Database Management<br>Server Processing<br>API Integration</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🔒</div>
+                    <h3>Security</h3>
+                    <p>Authentication<br>Data Encryption<br>Access Control</p>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">⚡</div>
+                    <h3>Performance</h3>
+                    <p>Real-time Updates<br>Data Export<br>Analytics</p>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800" alt="Technology Stack" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+
+        </div>
+
+        <!-- Slide 7: Departments -->
+        <div class="slide">
+            <h2>Department Coverage</h2>
+            <p style="text-align: center; color: #666; font-size: 1.2em; margin-bottom: 30px;">
+                Managing five engineering departments with integrated operations and specialized oversight
+            </p>
+            <div class="dept-card">
+                <div class="dept-name">🏗️ Civil Engineering</div>
+                <div class="dept-info">64 students • HOD: Dr. Abdul Ghaffar</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-name">💻 Computer Science</div>
+                <div class="dept-info">131 students • Dual sections</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-name">⚡ Electrical Engineering</div>
+                <div class="dept-info">60 students • HOD: Mr. Harshal Ghatole</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-name">🖥️ Information Technology</div>
+                <div class="dept-info">61 students • HOD: Dr. Meghna Jumde</div>
+            </div>
+            <div class="dept-card">
+                <div class="dept-name">⚙️ Mechanical Engineering</div>
+                <div class="dept-info">64 students • HOD: Mr. Samrat Kavishwar</div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Benefits -->
+        <div class="slide">
+            <h2>Benefits & Impact</h2>
+            <div class="benefits-section">
+                <div class="benefit-card">
+                    <div class="benefit-title">For Administration</div>
+                    <ul class="benefit-list">
+                        <li>Centralized management with real-time institutional analytics</li>
+                        <li>Data-driven decision making and strategic planning</li>
+                        <li>Automated reporting and compliance management</li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-title">For Teachers</div>
+                    <ul class="benefit-list">
+                        <li>Efficient attendance and assessment management</li>
+                        <li>Direct communication channels with students and parents</li>
+                        <li>Automated classroom scheduling and resource allocation</li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-title">For Students</div>
+                    <ul class="benefit-list">
+                        <li>Comprehensive access to academic performance metrics</li>
+                        <li>Real-time notifications and academic transparency</li>
+                        <li>Personalized learning progress tracking</li>
+                    </ul>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800" alt="Impact Metrics" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        </div>
+
+        <!-- Slide 9: Future Enhancements -->
+        <div class="slide">
+            <h2>Future Enhancements</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">Mobile Applications</div>
+                    <div class="feature-desc">Native iOS & Android platforms</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI Integration</div>
+                    <div class="feature-desc">Facial recognition & predictive analytics</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-title">Advanced Analytics</div>
+                    <div class="feature-desc">Student performance prediction</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">Online Exams</div>
+                    <div class="feature-desc">Automated evaluation system</div>
+                </div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800" alt="Future Roadmap" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+
+        </div>
+
+        <!-- Slide 10: Team -->
+        <div class="slide">
+            <h2>Design & Development Team</h2>
+            <p style="text-align: center; color: #666; font-size: 1.3em; margin-bottom: 40px;">
+                Techyug Software Pvt. Ltd.
+            </p>
+            <div class="team-section">
+                <div class="team-card">
+                    <div style="font-size: 4em; margin-bottom: 20px;">✨</div>
+                    <div class="team-name">Himanshu Patil</div>
+                    <div class="team-role">Full Stack Developer</div>
+                    <div class="team-skills">
+                        <span class="skill-badge">Frontend</span>
+                        <span class="skill-badge">Backend</span>
+                        <span class="skill-badge">Database</span>
+                        <span class="skill-badge">DevOps</span>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div style="font-size: 4em; margin-bottom: 20px;">✨</div>
+                    <div class="team-name">Pranay Panore</div>
+                    <div class="team-role">Software Engineer</div>
+                    <div class="team-skills">
+                        <span class="skill-badge">Development</span>
+                        <span class="skill-badge">Testing</span>
+                        <span class="skill-badge">Architecture</span>
+                        <span class="skill-badge">Cloud</span>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align: center; color: #666; font-size: 1.2em; margin-top: 40px;">
+                Crafted with passion and precision by the dedicated team at Techyug Software
+            </p>
+        </div>
+
+        <!-- Slide 11: Conclusion -->
+        <div class="slide hero-slide">
+            <h2 style="color: white;">Conclusion</h2>
+            <p style="font-size: 1.4em; margin: 30px 0;">
+                NIT AMS represents a comprehensive, scalable, and enterprise-grade solution for modern academic institution management, empowering educators and students with intelligent technology.
+            </p>
+            <h3 style="font-size: 2em; margin-top: 40px;">Empowering Education Through Innovation & Technology</h3>
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800" alt="Success Stories" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 15px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid white;">
+
+            <p style="font-size: 1.5em; margin-top: 40px;">Thank You! 🙏</p>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounter = document.getElementById('slideCounter');
+        const progressBar = document.getElementById('progressBar');
+
+        function showSlide(n) {
+            // Remove active class from all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active', 'prev');
+            });
+
+            // Add active class to current slide
+            slides[n].classList.add('active');
+
+            // Update counter
+            slideCounter.textContent = `${n + 1} / ${totalSlides}`;
+
+            // Update progress bar
+            const progress = ((n + 1) / totalSlides) * 100;
+            progressBar.style.width = progress + '%';
+
+            // Update button states
+            prevBtn.disabled = (n === 0);
+            nextBtn.disabled = (n === totalSlides - 1);
+
+            // Change next button text on last slide
+            if (n === totalSlides - 1) {
+                nextBtn.textContent = '🎉 Finish';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+        }
+
+        function changeSlide(direction) {
+            const newSlide = currentSlide + direction;
+            
+            if (newSlide >= 0 && newSlide < totalSlides) {
+                if (direction < 0) {
+                    slides[currentSlide].classList.add('prev');
+                }
+                currentSlide = newSlide;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                if (currentSlide < totalSlides - 1) {
+                    changeSlide(1);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentSlide > 0) {
+                    changeSlide(-1);
+                }
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Create security-related tables for the login system
+
+-- Table for tracking login attempts (Rate Limiting)
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `attempt_time` DATETIME NOT NULL,
+  `success` TINYINT(1) DEFAULT 0,
+  INDEX `idx_ip_time` (`ip_address`, `attempt_time`),
+  INDEX `idx_attempt_time` (`attempt_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table for security event logging
+CREATE TABLE IF NOT EXISTS `security_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `event_type` VARCHAR(50) NOT NULL,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `user_agent` TEXT,
+  `details` TEXT,
+  `user_id` INT DEFAULT NULL,
+  `created_at` DATETIME NOT NULL,
+  INDEX `idx_event_type` (`event_type`),
+  INDEX `idx_ip_address` (`ip_address`),
+  INDEX `idx_created_at` (`created_at`),
+  INDEX `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Add last_login column to existing tables if not exists
+ALTER TABLE `users` 
+ADD COLUMN IF NOT EXISTS `last_login` DATETIME DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS `failed_login_attempts` INT DEFAULT 0,
+ADD COLUMN IF NOT EXISTS `account_locked_until` DATETIME DEFAULT NULL;
+
+ALTER TABLE `students` 
+ADD COLUMN IF NOT EXISTS `last_login` DATETIME DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS `failed_login_attempts` INT DEFAULT 0,
+ADD COLUMN IF NOT EXISTS `account_locked_until` DATETIME DEFAULT NULL;
+
+ALTER TABLE `parents` 
+ADD COLUMN IF NOT EXISTS `last_login` DATETIME DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS `failed_login_attempts` INT DEFAULT 0,
+ADD COLUMN IF NOT EXISTS `account_locked_until` DATETIME DEFAULT NULL;
+
+-- Create table for session management
+CREATE TABLE IF NOT EXISTS `active_sessions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `user_role` VARCHAR(20) NOT NULL,
+  `session_id` VARCHAR(255) NOT NULL,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `user_agent` TEXT,
+  `last_activity` DATETIME NOT NULL,
+  `created_at` DATETIME NOT NULL,
+  INDEX `idx_session_id` (`session_id`),
+  INDEX `idx_user` (`user_id`, `user_role`),
+  INDEX `idx_last_activity` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Insert some test data (optional)
+-- For testing purposes only - Remove in production
+INSERT INTO security_logs (event_type, ip_address, user_agent, details, created_at) 
+VALUES ('SYSTEM_INIT', '127.0.0.1', 'System', 'Security system initialized', NOW());
